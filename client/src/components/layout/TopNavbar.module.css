@@ -1,0 +1,205 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   TopNavbar Module
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-5);
+  height: var(--navbar-height);
+  background: rgba(11, 11, 11, 0.80);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--color-border-subtle);
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  flex-shrink: 0;
+}
+
+@media (min-width: 640px) {
+  .header {
+    padding: 0 var(--space-8);
+  }
+}
+
+/* ── Left Section ──────────────────────────────────────────────────────── */
+.left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.menuBtn {
+  padding: var(--space-2);
+  border-radius: var(--radius-xl);
+  color: var(--color-text-muted);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.menuBtn:hover {
+  color: var(--color-text-primary);
+}
+
+@media (min-width: 1024px) {
+  .menuBtn {
+    display: none;
+  }
+}
+
+.brandText {
+  display: none;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-black);
+  background: linear-gradient(90deg, var(--color-primary), var(--color-accent), var(--color-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@media (min-width: 640px) {
+  .brandText {
+    display: inline;
+  }
+}
+
+/* ── Right Section ─────────────────────────────────────────────────────── */
+.right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.iconBtn {
+  position: relative;
+  padding: var(--space-2);
+  border-radius: var(--radius-xl);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-faint);
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-default);
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.iconBtn:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-border-strong);
+}
+
+@media (min-width: 640px) {
+  .iconBtn {
+    display: flex;
+  }
+}
+
+.notifDot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  box-shadow: 0 0 6px var(--color-primary-glow);
+}
+
+.divider {
+  width: 1px;
+  height: 20px;
+  background: var(--color-border-default);
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .divider {
+    display: block;
+  }
+}
+
+/* ── User Section ──────────────────────────────────────────────────────── */
+.userSection {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.userAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-black);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-hover));
+  flex-shrink: 0;
+}
+
+.userDetails {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .userDetails {
+    display: block;
+  }
+}
+
+.userNameRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.userNameText {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
+
+.crownIcon {
+  color: var(--color-secondary);
+}
+
+.userRoleText {
+  font-size: 10px;
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wider);
+  color: var(--color-primary);
+  line-height: 1;
+}
+
+/* ── Logout Button ─────────────────────────────────────────────────────── */
+.logoutBtn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-xl);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-muted);
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-default);
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.logoutBtn:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-border-strong);
+}
+
+.logoutLabel {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .logoutLabel {
+    display: inline;
+  }
+}

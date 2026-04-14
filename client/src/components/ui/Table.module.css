@@ -1,0 +1,133 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   Table Module
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.wrapper {
+  overflow: hidden;
+  border-radius: var(--radius-2xl);
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border-default);
+}
+
+.scrollArea {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* ── Header ────────────────────────────────────────────────────────────── */
+.thead {
+  background: var(--color-bg-elevated);
+  border-bottom: 1px solid var(--color-border-default);
+}
+
+.th {
+  padding: var(--space-4) var(--space-5);
+  font-size: 10px;
+  font-weight: var(--font-weight-black);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--color-text-faint);
+}
+
+.thLeft {
+  composes: th;
+  text-align: left;
+}
+
+.thCenter {
+  composes: th;
+  text-align: center;
+}
+
+.thRight {
+  composes: th;
+  text-align: right;
+}
+
+/* ── Body Rows ─────────────────────────────────────────────────────────── */
+.tr {
+  border-bottom: 1px solid var(--color-border-subtle);
+  transition: background var(--duration-fast) var(--ease-out);
+}
+
+.trHover {
+  composes: tr;
+  background: var(--color-bg-elevated);
+}
+
+.trClickable {
+  cursor: pointer;
+}
+
+.td {
+  padding: 14px var(--space-5);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.tdLeft {
+  composes: td;
+  text-align: left;
+}
+
+.tdCenter {
+  composes: td;
+  text-align: center;
+}
+
+.tdRight {
+  composes: td;
+  text-align: right;
+}
+
+/* ── Loading Skeleton ──────────────────────────────────────────────────── */
+.skeletonRow {
+  border-bottom: 1px solid var(--color-border-subtle);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.skeletonCell {
+  padding: var(--space-4) var(--space-5);
+}
+
+.skeletonBar {
+  height: 16px;
+  border-radius: var(--radius-lg);
+  width: 75%;
+  background: var(--color-bg-elevated);
+}
+
+/* ── Empty State ───────────────────────────────────────────────────────── */
+.emptyCell {
+  padding: var(--space-16) var(--space-6);
+  text-align: center;
+}
+
+.emptyInner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.emptyIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-2xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-default);
+}
+
+.emptyText {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-muted);
+}

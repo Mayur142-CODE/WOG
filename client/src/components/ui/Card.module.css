@@ -1,0 +1,75 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   Card Module
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.card {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-6);
+}
+
+.cardHover {
+  composes: card;
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.cardHover:hover {
+  transform: translateY(-3px);
+}
+
+/* ── Stat Card ─────────────────────────────────────────────────────────── */
+.statCard {
+  composes: card;
+  position: relative;
+  overflow: hidden;
+  cursor: default;
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.accentLine {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+}
+
+.statContent {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.statText {
+  flex: 1;
+  min-width: 0;
+}
+
+.statLabel {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--color-text-faint);
+  margin-bottom: var(--space-2);
+}
+
+.statValue {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-black);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--color-text-primary);
+}
+
+.statIcon {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: var(--space-4);
+}

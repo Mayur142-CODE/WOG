@@ -1,0 +1,44 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   Spinner Module
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.spinnerBox {
+  position: relative;
+}
+
+.ring {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-full);
+  border: 3px solid transparent;
+  border-top-color: var(--color-primary);
+  border-right-color: var(--color-primary-light);
+  animation: spin 1s linear infinite;
+}
+
+.ringInner {
+  position: absolute;
+  inset: 6px;
+  border-radius: var(--radius-full);
+  border: 2px solid transparent;
+  border-bottom-color: var(--color-accent);
+  border-left-color: var(--color-secondary);
+  animation: spinReverse 1.5s linear infinite;
+}
+
+.fullScreen {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 10, 10, 0.85);
+  backdrop-filter: blur(8px);
+}

@@ -1,0 +1,246 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   Login Page Module
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  position: relative;
+  overflow: hidden;
+  background: var(--color-bg-base);
+}
+
+.cardWrapper {
+  width: 100%;
+  max-width: 420px;
+  position: relative;
+  z-index: 10;
+}
+
+.gradientBorder {
+  padding: 1px;
+  border-radius: var(--radius-3xl);
+  background: linear-gradient(
+    135deg,
+    rgba(239, 68, 68, 0.5),
+    rgba(249, 115, 22, 0.3),
+    rgba(245, 158, 11, 0.15),
+    transparent
+  );
+}
+
+.card {
+  border-radius: 23px;
+  padding: var(--space-8);
+  position: relative;
+  overflow: hidden;
+  background: rgba(16, 14, 14, 0.96);
+  backdrop-filter: blur(24px);
+}
+
+@media (min-width: 1024px) {
+  .card {
+    padding: var(--space-10);
+  }
+}
+
+.innerGlow {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 256px;
+  height: 256px;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(239, 68, 68, 0.07) 0%, transparent 70%);
+  filter: blur(30px);
+  transform: translate(30%, -30%);
+}
+
+/* ── Logo Section ──────────────────────────────────────────────────────── */
+.logoSection {
+  text-align: center;
+  margin-bottom: var(--space-10);
+}
+
+.logoIcon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto var(--space-5);
+  border-radius: var(--radius-2xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+  box-shadow: 0 0 40px rgba(239, 68, 68, 0.45);
+  color: white;
+}
+
+.logoShine {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), transparent);
+}
+
+.logoTitle {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-black);
+  letter-spacing: var(--letter-spacing-wider);
+  color: var(--color-text-primary);
+}
+
+.logoSubtitle {
+  font-size: var(--font-size-xs);
+  margin-top: var(--space-2);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.28em;
+  color: var(--color-primary);
+}
+
+/* ── Error Alert ───────────────────────────────────────────────────────── */
+.errorAlert {
+  margin-bottom: var(--space-6);
+  padding: 14px;
+  border-radius: var(--radius-xl);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  background: rgba(239, 68, 68, 0.10);
+  border: 1px solid rgba(239, 68, 68, 0.30);
+  color: var(--color-primary);
+}
+
+.errorIcon {
+  flex-shrink: 0;
+}
+
+/* ── Form ──────────────────────────────────────────────────────────────── */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.fieldLabel {
+  display: block;
+  font-size: 10px;
+  font-weight: var(--font-weight-black);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--color-text-faint);
+}
+
+.fieldInputWrapper {
+  position: relative;
+}
+
+.fieldIcon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--color-text-faint);
+}
+
+.fieldInput {
+  width: 100%;
+  padding: 11px 14px 11px 40px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-lg);
+  color: var(--color-text-primary);
+  font-size: 0.9rem;
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.fieldInput:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-subtle);
+  background: var(--color-bg-elevated);
+}
+
+.fieldInput::placeholder {
+  color: var(--color-text-faint);
+}
+
+/* ── Submit Button ─────────────────────────────────────────────────────── */
+.submitWrapper {
+  padding-top: var(--space-2);
+}
+
+.submitBtn {
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  padding: 14px;
+  border-radius: var(--radius-xl);
+  font-weight: var(--font-weight-black);
+  font-size: var(--font-size-sm);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: white;
+  border: none;
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.submitBtnActive {
+  composes: submitBtn;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 50%, #f97316 100%);
+  box-shadow: 0 0 32px rgba(239, 68, 68, 0.35);
+  cursor: pointer;
+}
+
+.submitBtnLoading {
+  composes: submitBtn;
+  background: rgba(239, 68, 68, 0.5);
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.submitShimmer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.18), transparent);
+  animation: shimmer 2.5s linear infinite;
+}
+
+.submitContent {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+}
+
+.submitSpinner {
+  animation: spin 1s linear infinite;
+}
+
+/* ── Footer ────────────────────────────────────────────────────────────── */
+.footer {
+  margin-top: var(--space-8);
+  text-align: center;
+  font-size: 9px;
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--color-text-faint);
+}

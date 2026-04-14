@@ -1,0 +1,309 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   Dashboard Page Module
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+/* ── Page Header ───────────────────────────────────────────────────────── */
+.pageHeader {
+  margin-bottom: 0;
+}
+
+.pageTitle {
+  font-size: 1.75rem;
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-text-primary);
+  margin-bottom: 6px;
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+.pageSubtitle {
+  font-size: 0.9375rem;
+  color: var(--color-text-muted);
+}
+
+/* ── Loading ───────────────────────────────────────────────────────────── */
+.loadingWrap {
+  height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Current Turn Banner ───────────────────────────────────────────────── */
+.bannerOuter {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-2xl);
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    rgba(239, 68, 68, 0.55),
+    rgba(249, 115, 22, 0.30),
+    rgba(245, 158, 11, 0.15)
+  );
+}
+
+.bannerInner {
+  border-radius: 15px;
+  padding: var(--space-6) var(--space-6);
+  position: relative;
+  background: linear-gradient(135deg, rgba(20, 10, 10, 0.97), rgba(18, 12, 10, 0.95));
+}
+
+@media (min-width: 1024px) {
+  .bannerInner {
+    padding: var(--space-6) var(--space-8);
+  }
+}
+
+.bannerGlow {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 256px;
+  height: 256px;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(239, 68, 68, 0.12) 0%, transparent 70%);
+  filter: blur(30px);
+  transform: translate(20%, -20%);
+}
+
+.bannerContent {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+}
+
+@media (min-width: 1024px) {
+  .bannerContent {
+    flex-direction: row;
+  }
+}
+
+.bannerLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.bannerIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: var(--color-primary-subtle);
+  border: 1px solid var(--color-border-fire);
+}
+
+.bannerLabel {
+  font-size: 10px;
+  font-weight: var(--font-weight-black);
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--color-primary);
+  margin-bottom: var(--space-1);
+}
+
+.bannerPlayer {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-black);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--color-text-primary);
+}
+
+@media (min-width: 1024px) {
+  .bannerPlayer {
+    font-size: var(--font-size-3xl);
+  }
+}
+
+.bannerRight {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-xl);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--color-border-default);
+}
+
+.upNextLabel {
+  font-size: 9px;
+  font-weight: var(--font-weight-black);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--color-text-faint);
+  margin-bottom: var(--space-1);
+  text-align: right;
+}
+
+.upNextName {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
+
+.upNextArrow {
+  color: var(--color-text-faint);
+}
+
+/* ── Stats Grid ────────────────────────────────────────────────────────── */
+.statsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-5);
+}
+
+@media (min-width: 640px) {
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .statsGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* ── Form Section ──────────────────────────────────────────────────────── */
+.formCard {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-6);
+}
+
+@media (min-width: 1024px) {
+  .formCard {
+    padding: var(--space-8);
+  }
+}
+
+.formHeader {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+  padding-bottom: var(--space-5);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+@media (min-width: 640px) {
+  .formHeader {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.formTitle {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-black);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--color-text-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.formTitleIcon {
+  color: var(--color-secondary);
+}
+
+.formSubtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-top: 6px;
+}
+
+.playerBadge {
+  font-weight: var(--font-weight-bold);
+  padding: 2px 10px;
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-xs);
+  margin-left: var(--space-1);
+  background: var(--color-primary-subtle);
+  color: var(--color-primary);
+  border: 1px solid var(--color-border-fire);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-5);
+}
+
+@media (min-width: 768px) {
+  .formRow {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ── Prize Section ─────────────────────────────────────────────────────── */
+.prizeSection {
+  padding: var(--space-5);
+  border-radius: var(--radius-xl);
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-default);
+}
+
+.prizeLabel {
+  font-size: 10px;
+  font-weight: var(--font-weight-black);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--color-text-faint);
+  margin-bottom: var(--space-4);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.prizeLabelIcon {
+  color: var(--color-secondary);
+}
+
+.prizeGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+@media (min-width: 640px) {
+  .prizeGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.prizeInactive {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+/* ── Submit Footer ─────────────────────────────────────────────────────── */
+.submitRow {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: var(--space-2);
+}
