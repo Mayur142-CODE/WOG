@@ -65,10 +65,9 @@ const forgotPassword = async (req, res, next) => {
 
     const player = await Player.findOne({ email: email.trim().toLowerCase() });
 
-    // Always return same message to prevent email enumeration
-    if (!player) {
-      return res.json({ message: 'If that email is registered, a reset link has been sent.' });
-    }
+    // Return a clear error — email must be registered before we send anything
+    if (!player)
+      return res.status(404).json({ message: 'No account found with that email address.' });
 
     const rawToken    = crypto.randomBytes(32).toString('hex');
     const hashedToken = crypto.createHash('sha256').update(rawToken).digest('hex');
