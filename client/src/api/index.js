@@ -26,20 +26,21 @@ export const loginApi = (data) => api.post('/auth/login', data);
 export const getMe    = ()     => api.get('/auth/me');
 
 // ── Players ───────────────────────────────────────────────────────────────
-export const getPlayers     = ()       => api.get('/players');
-export const reorderPlayers = (data)   => api.put('/players/reorder', data);
-export const createPlayer   = (data)   => api.post('/players', data);
-export const deletePlayer   = (id)     => api.delete(`/players/${id}`);
+export const getPlayers       = ()     => api.get('/players');
+export const reorderPlayers   = (data) => api.put('/players/reorder', data);
+export const reorderCsPlayers = (data) => api.put('/players/reorder-cs', data);
+export const createPlayer     = (data) => api.post('/players', data);
+export const deletePlayer     = (id)   => api.delete(`/players/${id}`);
 
 // ── Scrims ────────────────────────────────────────────────────────────────
-export const getScrims    = ()         => api.get('/scrims');
-export const createScrim  = (data)     => api.post('/scrims', data);
-export const updateScrim  = (id, data) => api.put(`/scrims/${id}`, data);
-export const deleteScrim  = (id)       => api.delete(`/scrims/${id}`);
+export const getScrims   = (mode)     => api.get(mode && mode !== 'All' ? `/scrims?mode=${mode}` : '/scrims');
+export const createScrim = (data)     => api.post('/scrims', data);
+export const updateScrim = (id, data) => api.put(`/scrims/${id}`, data);
+export const deleteScrim = (id)       => api.delete(`/scrims/${id}`);
 
 // ── Summary ───────────────────────────────────────────────────────────────
-export const getSummary = ()  => api.get('/summary');
-export const resetTurn  = ()  => api.post('/summary/reset-turn');
+export const getSummary = (mode = 'BR') => api.get(`/summary?mode=${mode}`);
+export const resetTurn  = (mode = 'BR') => api.post(`/summary/reset-turn?mode=${mode}`);
 
 // ── Users / Profile ─────────────────────────────────────────────────────
 export const updateUsernameApi      = (data)     => api.put('/users/update-username', data);

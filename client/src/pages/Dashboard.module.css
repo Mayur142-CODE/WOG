@@ -307,3 +307,84 @@
   justify-content: flex-end;
   padding-top: var(--space-2);
 }
+
+/* ── Mode Switcher ──────────────────────────────────────────────────────── */
+.modeSwitcher {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.modeTab,
+.modeTabActive {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.625rem 1.25rem;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.18s;
+  border: 1px solid var(--color-border-default);
+  background: var(--color-bg-elevated);
+  color: var(--color-text-muted);
+}
+
+.modeTabActive {
+  border-color: rgba(239,68,68,0.5);
+  background: rgba(239,68,68,0.08);
+  color: var(--color-text-primary);
+}
+
+.modeTab:hover {
+  border-color: var(--color-border-default);
+  color: var(--color-text-primary);
+  background: var(--color-bg-tertiary);
+}
+
+.modeTabIcon {
+  display: flex;
+  align-items: center;
+}
+
+.modeTabLabel {
+  display: block;
+  line-height: 1.2;
+}
+
+.modeTabSub {
+  display: block;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-text-faint);
+  margin-top: 1px;
+}
+
+/* ── CS themed form card ────────────────────────────────────────────────── */
+.formCardCs {
+  border-color: rgba(99,102,241,0.25);
+  background: linear-gradient(
+    160deg,
+    rgba(99, 102, 241, 0.04) 0%,
+    var(--color-bg-card) 100%
+  );
+}
+
+.formTitleIconCs {
+  color: #818cf8;
+}
+
+.playerBadgeCs {
+  font-weight: var(--font-weight-bold);
+  padding: 2px 10px;
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-xs);
+  margin-left: var(--space-1);
+  background: rgba(99,102,241,0.12);
+  color: #818cf8;
+  border: 1px solid rgba(99,102,241,0.3);
+}
+

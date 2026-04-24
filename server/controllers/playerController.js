@@ -37,6 +37,25 @@ const createPlayer = async (req, res, next) => {
   }
 };
 
+// PUT /api/players/reorder-cs — body: [{ _id, order }]
+const reorderCsPlayers = async (req, res, next) => {
+  try {
+    const updates = req.body;
+    if (!Array.isArray(updates) || updates.length === 0)
+      return res.status(400).json({ message: 'Invalid reorder payload' });
+    const ops = updates.map(({ _id, order }) =>
+      Player.findByIdAndUpdate(_id, { csOrder: order }, { new: true })
+    );
+    await Promise.all(ops);
+    const players = await Player.find().sort({ csOrder: 1 });
+    // Reset CS turn index
+    await Turn.findOneAndUpdate({}, { csIndex: 0 }, { upsert: true });
+    res.json({ players, message: 'CS order updated successfully' });
+  } catch (err) {
+    next(err);
+  }
+};
+
 // PUT /api/players/reorder — body: [{ _id, order }]
 const reorderPlayers = async (req, res, next) => {
   try {
@@ -93,4 +112,4 @@ const deletePlayer = async (req, res, next) => {
   }
 };
 
-module.exports = { getPlayers, createPlayer, reorderPlayers, updatePlayer, deletePlayer };
+module.exports = { getPlayers, createPlayer, reorderPlayers, reorderCsPlayers, updatePlayer, deletePlayer };

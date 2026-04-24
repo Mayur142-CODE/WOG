@@ -4,8 +4,10 @@ const bcrypt   = require('bcryptjs');
 const playerSchema = new mongoose.Schema(
   {
     // ── Game fields ──────────────────────────────────────────────────────────
-    name:  { type: String, required: [true, 'Player name is required'], trim: true, unique: true },
-    order: { type: Number, required: true, default: 0 },
+    name:    { type: String, required: [true, 'Player name is required'], trim: true, unique: true },
+    order:   { type: Number, required: true, default: 0 },   // legacy / BR order
+    brOrder: { type: Number, default: null },                 // Battle Royale pay order
+    csOrder: { type: Number, default: null },                 // Clash Squad pay order
 
     // ── Auth fields ──────────────────────────────────────────────────────────
     username: {

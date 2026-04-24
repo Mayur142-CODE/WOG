@@ -22,8 +22,9 @@ const History = () => {
   const [scrims, setScrims] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [search, setSearch] = useState('');
+  const [search, setSearch]           = useState('');
   const [playerFilter, setPlayerFilter] = useState('All');
+  const [modeFilter, setModeFilter]   = useState('All');   // 'All' | 'BR' | 'CS'
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleting, setDeleting] = useState(false);
   
@@ -33,9 +34,11 @@ const History = () => {
   const [editForm, setEditForm] = useState({
     player: '',
     rank: '1',
+    result: 'WIN',
     entryFee: 30,
     winningAmount: 0,
-    date: ''
+    date: '',
+    mode: 'BR',
   });
 
   const fetchHistory = async () => {
@@ -69,11 +72,13 @@ const History = () => {
   const handleEditInit = (scrim) => {
     setEditTarget(scrim._id);
     setEditForm({
-      player: scrim.player,
-      rank: scrim.rank,
-      entryFee: scrim.entryFee,
+      player:        scrim.player,
+      rank:          scrim.rank || '1',
+      result:        scrim.result || 'WIN',
+      entryFee:      scrim.entryFee,
       winningAmount: scrim.winningAmount,
-      date: new Date(scrim.date).toISOString().split('T')[0]
+      date:          new Date(scrim.date).toISOString().split('T')[0],
+      mode:          scrim.mode || 'BR',
     });
   };
 
@@ -109,35 +114,48 @@ const History = () => {
     document.body.removeChild(link);
   };
 
-  const uniquePlayers = ['All', ...new Set(scrims.map((scrim) => scrim.player))];
+  const uniquePlayers = ['All', ...new Set(scrims.map((s) => s.player))];
 
   const filteredScrims = scrims.filter((scrim) => {
-    const matchSearch = scrim.player.toLowerCase().includes(search.toLowerCase()) || scrim.rank.toLowerCase().includes(search.toLowerCase());
+    const matchSearch = scrim.player.toLowerCase().includes(search.toLowerCase()) ||
+      (scrim.rank || scrim.result || '').toLowerCase().includes(search.toLowerCase());
     const matchPlayer = playerFilter === 'All' || scrim.player === playerFilter;
-    return matchSearch && matchPlayer;
+    const matchMode   = modeFilter   === 'All' || (scrim.mode || 'BR') === modeFilter;
+    return matchSearch && matchPlayer && matchMode;
   });
 
   const totalPages = Math.ceil(filteredScrims.length / ITEMS_PER_PAGE);
   const paginatedScrims = filteredScrims.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
-  useEffect(() => { setCurrentPage(1); }, [search, playerFilter]);
+  useEffect(() => { setCurrentPage(1); }, [search, playerFilter, modeFilter]);
 
   if (loading) return <div className={s.loadingWrap}><Spinner /></div>;
 
-  const rankBadge = (rank) => {
+  const rankBadge = (scrim) => {
+    if ((scrim.mode || 'BR') === 'CS') {
+      const isWin = scrim.result === 'WIN';
+      return <Badge variant={isWin ? 'success' : 'neutral'} size="sm">{isWin ? '✅ WIN' : '❌ DEFEAT'}</Badge>;
+    }
     const map = { '1': ['warning', '🥇 #1'], '2': ['neutral', '🥈 #2'], '3': ['accent', '🥉 #3'] };
-    const [variant, label] = map[rank] || ['neutral', '> #3'];
+    const [variant, label] = map[scrim.rank] || ['neutral', '> #3'];
     return <Badge variant={variant} size="sm">{label}</Badge>;
   };
 
   const columns = [
-    {
-      key: 'date', label: 'Date',
+    { key: 'date', label: 'Date',
       render: (_, row) => new Date(row.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }),
       cellClassName: s.fontMedium,
     },
     { key: 'player', label: 'Player', cellClassName: s.fontBold },
-    { key: 'rank', label: 'Rank', align: 'center', render: (val) => rankBadge(val) },
+    {
+      key: 'mode', label: 'Mode', align: 'center',
+      render: (_, row) => (
+        <span className={(row.mode || 'BR') === 'CS' ? s.badgeCs : s.badgeBr}>
+          {row.mode || 'BR'}
+        </span>
+      ),
+    },
+    { key: 'result', label: 'Result', align: 'center', render: (_, row) => rankBadge(row) },
     {
       key: 'entryFee', label: 'Fee (₹)', align: 'right',
       render: (val) => <span className={s.feeText}>₹{val}</span>,
@@ -160,16 +178,10 @@ const History = () => {
       key: 'actions', label: 'Actions', align: 'center',
       render: (_, row) => (
         <div className={s.actionCell}>
-          <button
-            onClick={(e) => { e.stopPropagation(); handleEditInit(row); }}
-            className={s.editBtn}
-          >
+          <button onClick={(e) => { e.stopPropagation(); handleEditInit(row); }} className={s.editBtn}>
             <Pencil size={14} />
           </button>
-          <button
-            onClick={(e) => { e.stopPropagation(); setDeleteTarget(row._id); }}
-            className={s.deleteBtn}
-          >
+          <button onClick={(e) => { e.stopPropagation(); setDeleteTarget(row._id); }} className={s.deleteBtn}>
             <Trash2 size={14} />
           </button>
         </div>
@@ -206,16 +218,19 @@ const History = () => {
           />
         </div>
         <div className={s.filterField}>
-          <Select
-            value={playerFilter}
-            onChange={(e) => setPlayerFilter(e.target.value)}
-            icon={<Filter size={15} />}
-          >
-            {uniquePlayers.map((p) => (
-              <option key={p} value={p}>{p === 'All' ? 'All Players' : p}</option>
-            ))}
-          </Select>
-        </div>
+            <Select value={playerFilter} onChange={(e) => setPlayerFilter(e.target.value)} icon={<Filter size={15} />}>
+              {uniquePlayers.map((p) => (
+                <option key={p} value={p}>{p === 'All' ? 'All Players' : p}</option>
+              ))}
+            </Select>
+          </div>
+          <div className={s.filterField}>
+            <Select value={modeFilter} onChange={(e) => setModeFilter(e.target.value)} icon={<Filter size={15} />}>
+              <option value="All">All Modes</option>
+              <option value="BR">Battle Royale</option>
+              <option value="CS">Clash Squad</option>
+            </Select>
+          </div>
       </motion.div>
 
       {/* Table */}
@@ -297,55 +312,58 @@ const History = () => {
         <form className={s.editForm} onSubmit={handleUpdate}>
           <div className={s.formGrid}>
             <div className={s.colFull}>
-              <Input
-                label="Date"
-                type="date"
-                value={editForm.date}
+              <Input label="Date" type="date" value={editForm.date}
                 onChange={(e) => setEditForm({ ...editForm, date: e.target.value })}
-                icon={<Calendar size={14} />}
-                required
-              />
+                icon={<Calendar size={14} />} required />
             </div>
             <div className={s.colFull}>
-              <Input
-                label="Player Name"
-                value={editForm.player}
+              <Input label="Player Name" value={editForm.player}
                 onChange={(e) => setEditForm({ ...editForm, player: e.target.value })}
-                icon={<HistoryIcon size={14} />}
-                required
-              />
+                icon={<HistoryIcon size={14} />} required />
             </div>
-            <div className={s.colHalf}>
-              <Select
-                label="Rank"
-                value={editForm.rank}
-                onChange={(e) => setEditForm({ ...editForm, rank: e.target.value })}
-              >
-                <option value="1">Rank 1</option>
-                <option value="2">Rank 2</option>
-                <option value="3">Rank 3</option>
-                <option value="Below 3">Below 3</option>
-              </Select>
-            </div>
-            <div className={s.colHalf}>
-              <Input
-                label="Entry Fee (₹)"
-                type="number"
-                value={editForm.entryFee}
-                onChange={(e) => setEditForm({ ...editForm, entryFee: e.target.value })}
-                required
-              />
-            </div>
-            {['1', '2', '3'].includes(editForm.rank) && (
-              <div className={s.colFull}>
-                <Input
-                  label="Winning Amount (₹)"
-                  type="number"
-                  value={editForm.winningAmount}
-                  onChange={(e) => setEditForm({ ...editForm, winningAmount: e.target.value })}
-                  required
-                />
-              </div>
+
+            {(editForm.mode || 'BR') === 'BR' ? (
+              <>
+                <div className={s.colHalf}>
+                  <Select label="Rank" value={editForm.rank}
+                    onChange={(e) => setEditForm({ ...editForm, rank: e.target.value })}>
+                    <option value="1">Rank 1</option>
+                    <option value="2">Rank 2</option>
+                    <option value="3">Rank 3</option>
+                    <option value="Below 3">Below 3</option>
+                  </Select>
+                </div>
+                <div className={s.colHalf}>
+                  <Input label="Entry Fee (₹)" type="number" value={editForm.entryFee}
+                    onChange={(e) => setEditForm({ ...editForm, entryFee: e.target.value })} required />
+                </div>
+                {['1','2','3'].includes(editForm.rank) && (
+                  <div className={s.colFull}>
+                    <Input label="Winning Amount (₹)" type="number" value={editForm.winningAmount}
+                      onChange={(e) => setEditForm({ ...editForm, winningAmount: e.target.value })} required />
+                  </div>
+                )}
+              </>
+            ) : (
+              <>
+                <div className={s.colHalf}>
+                  <Select label="Result" value={editForm.result}
+                    onChange={(e) => setEditForm({ ...editForm, result: e.target.value })}>
+                    <option value="WIN">WIN</option>
+                    <option value="DEFEAT">DEFEAT</option>
+                  </Select>
+                </div>
+                <div className={s.colHalf}>
+                  <Input label="Entry Fee (₹)" type="number" value={editForm.entryFee}
+                    onChange={(e) => setEditForm({ ...editForm, entryFee: e.target.value })} required />
+                </div>
+                {editForm.result === 'WIN' && (
+                  <div className={s.colFull}>
+                    <Input label="Winning Amount (₹)" type="number" value={editForm.winningAmount}
+                      onChange={(e) => setEditForm({ ...editForm, winningAmount: e.target.value })} required />
+                  </div>
+                )}
+              </>
             )}
           </div>
         </form>
