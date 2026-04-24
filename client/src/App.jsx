@@ -8,6 +8,8 @@ import Dashboard from './pages/Dashboard';
 import History from './pages/History';
 import Profile from './pages/Profile';
 import Players from './pages/Players';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 
 const toastOptions = {
   style: {
@@ -48,7 +50,9 @@ const AppContent = () => (
   <>
     <Toaster position="top-right" toastOptions={toastOptions} />
     <Routes>
-      <Route path="/login" element={<Login />} />
+      <Route path="/login"           element={<Login />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password"  element={<ResetPassword />} />
 
       <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
         <Route path="/" element={<Dashboard />} />

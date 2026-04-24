@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { loginApi } from '../api';
 import { useAppContext } from '../context/AppContext';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -106,7 +106,7 @@ const Login = () => {
                 transition={{ delay: 0.42 }}
                 className={s.fieldGroup}
               >
-                <label className={s.fieldLabel}>Username</label>
+                <label className={s.fieldLabel}>Username or Email</label>
                 <div className={s.fieldInputWrapper}>
                   <div className={s.fieldIcon}>
                     <User size={15} />
@@ -115,7 +115,7 @@ const Login = () => {
                     type="text"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    placeholder="e.g. mayur"
+                    placeholder="username or email"
                     required
                     className={s.fieldInput}
                   />
@@ -142,6 +142,11 @@ const Login = () => {
                     required
                     className={s.fieldInput}
                   />
+                </div>
+                <div className={s.forgotWrapper}>
+                  <Link to="/forgot-password" className={s.forgotLink}>
+                    Forgot password?
+                  </Link>
                 </div>
               </motion.div>
 

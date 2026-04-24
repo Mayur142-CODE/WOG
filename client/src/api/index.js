@@ -42,7 +42,13 @@ export const getSummary = ()  => api.get('/summary');
 export const resetTurn  = ()  => api.post('/summary/reset-turn');
 
 // ── Users ───────────────────────────────────────────────────────────────
-export const updateUsernameApi = (data) => api.put('/users/update-username', data);
-export const updatePasswordApi = (data) => api.put('/users/update-password', data);
+export const updateUsernameApi   = (data)     => api.put('/users/update-username', data);
+export const updatePasswordApi   = (data)     => api.put('/users/update-password', data);
+export const createUserApi       = (data)     => api.post('/users', data);
+export const updateUserEmailApi  = (id, data) => api.put(`/users/${id}/email`, data);
+
+// ── Auth — Password Reset ────────────────────────────────────────────────
+export const forgotPasswordApi = (data) => api.post('/auth/forgot-password', data);
+export const resetPasswordApi  = (data) => api.post('/auth/reset-password',  data);
 
 export default api;
