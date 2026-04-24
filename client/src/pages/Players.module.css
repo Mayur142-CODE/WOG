@@ -118,3 +118,66 @@
   font-size: var(--font-size-sm);
   color: var(--color-text-muted);
 }
+
+/* ── Mode Tabs ─────────────────────────────────────────────────────────── */
+.modeTabs {
+  display: flex;
+  gap: 0.625rem;
+}
+
+.modeTab,
+.modeTabActive,
+.modeTabActiveCs {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.125rem;
+  border-radius: 10px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.18s;
+  border: 1px solid var(--color-border-default);
+  background: var(--color-bg-elevated);
+  color: var(--color-text-muted);
+}
+
+.modeTabActive {
+  border-color: rgba(239,68,68,0.45);
+  background: rgba(239,68,68,0.08);
+  color: var(--color-text-primary);
+}
+
+.modeTabActiveCs {
+  border-color: rgba(99,102,241,0.45);
+  background: rgba(99,102,241,0.08);
+  color: #818cf8;
+}
+
+.modeTab:hover {
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+}
+
+/* ── CS variant list card ──────────────────────────────────────────────── */
+.listCardCs {
+  composes: listCard;
+  border-color: rgba(99,102,241,0.22);
+  background: linear-gradient(160deg, rgba(99,102,241,0.04) 0%, var(--color-bg-card) 100%);
+}
+
+/* ── CS Paying Badge ───────────────────────────────────────────────────── */
+.payingBadgeCs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: var(--space-1) 10px;
+  border-radius: var(--radius-lg);
+  font-size: 10px;
+  font-weight: var(--font-weight-black);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wider);
+  background: rgba(99,102,241,0.10);
+  border: 1px solid rgba(99,102,241,0.25);
+  color: #818cf8;
+}
