@@ -1,0 +1,198 @@
+.page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding-bottom: 3rem;
+}
+
+/* ── Table Card ────────────────────────────────────────────────────────── */
+.tableCard {
+  padding: 0;
+  overflow: hidden;
+  margin-top: 1.75rem;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.th {
+  padding: 0.875rem 1.25rem;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-text-faint);
+  background: var(--color-bg-tertiary);
+  text-align: left;
+  border-bottom: 1px solid var(--color-border-default);
+  white-space: nowrap;
+}
+
+.thActions {
+  text-align: center;
+}
+
+.tr {
+  border-bottom: 1px solid var(--color-border-default);
+  transition: background 0.15s;
+}
+
+.tr:last-child {
+  border-bottom: none;
+}
+
+.tr:hover {
+  background: var(--color-bg-elevated);
+}
+
+.td {
+  padding: 1rem 1.25rem;
+  vertical-align: middle;
+}
+
+/* ── Player Cell ───────────────────────────────────────────────────────── */
+.playerCell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ef4444, #f97316);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.playerName {
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.mono {
+  font-family: monospace;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.emailText {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+/* ── Role Badges ───────────────────────────────────────────────────────── */
+.roleAdmin,
+.roleViewer {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.roleAdmin {
+  background: rgba(239,68,68,0.12);
+  border: 1px solid rgba(239,68,68,0.3);
+  color: #ef4444;
+}
+
+.roleViewer {
+  background: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border-default);
+  color: var(--color-text-muted);
+}
+
+/* ── Action Buttons ────────────────────────────────────────────────────── */
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.actionBtn,
+.actionBtnDanger {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-border-default);
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.actionBtn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: rgba(239,68,68,0.08);
+}
+
+.actionBtnDanger:hover {
+  border-color: #ef4444;
+  color: #ef4444;
+  background: rgba(239,68,68,0.08);
+}
+
+/* ── Loading ───────────────────────────────────────────────────────────── */
+.loadingText {
+  padding: 3rem;
+  text-align: center;
+  color: var(--color-text-faint);
+  font-size: 0.875rem;
+}
+
+/* ── Modal Form ────────────────────────────────────────────────────────── */
+.modalForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.passRow {
+  position: relative;
+}
+
+.eyeBtn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(30%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-faint);
+  display: flex;
+  align-items: center;
+}
+
+.eyeBtn:hover {
+  color: var(--color-text-muted);
+}
+
+/* ── Delete Text ───────────────────────────────────────────────────────── */
+.deleteText {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  margin: 0;
+}

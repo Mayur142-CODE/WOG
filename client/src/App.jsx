@@ -8,6 +8,7 @@ import Dashboard from './pages/Dashboard';
 import History from './pages/History';
 import Profile from './pages/Profile';
 import Players from './pages/Players';
+import ManagePlayers from './pages/ManagePlayers';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 
@@ -59,6 +60,7 @@ const AppContent = () => (
         <Route path="/history" element={<History />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/players" element={<ProtectedRoute requireAdmin><Players /></ProtectedRoute>} />
+        <Route path="/manage-players" element={<ProtectedRoute requireAdmin><ManagePlayers /></ProtectedRoute>} />
       </Route>
 
       <Route path="*" element={<NotFound />} />

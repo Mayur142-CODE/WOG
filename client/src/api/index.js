@@ -41,13 +41,16 @@ export const deleteScrim  = (id)       => api.delete(`/scrims/${id}`);
 export const getSummary = ()  => api.get('/summary');
 export const resetTurn  = ()  => api.post('/summary/reset-turn');
 
-// ── Users ───────────────────────────────────────────────────────────────
-export const updateUsernameApi   = (data)     => api.put('/users/update-username', data);
-export const updatePasswordApi   = (data)     => api.put('/users/update-password', data);
-export const createUserApi       = (data)     => api.post('/users', data);
-export const updateUserEmailApi  = (id, data) => api.put(`/users/${id}/email`, data);
+// ── Users / Profile ─────────────────────────────────────────────────────
+export const updateUsernameApi      = (data)     => api.put('/users/update-username', data);
+export const updatePasswordApi      = (data)     => api.put('/users/update-password', data);
+export const updateProfileApi       = (data)     => api.put('/users/update-profile', data);
+export const createUserApi          = (data)     => api.post('/users', data);
+export const updateUserEmailApi     = (id, data) => api.put(`/users/${id}/email`, data);
+export const adminUpdatePlayerApi   = (id, data) => api.put(`/users/${id}/admin-update`, data);
+export const adminChangePasswordApi = (id, data) => api.put(`/users/${id}/password`, data);
 
-// ── Auth — Password Reset ────────────────────────────────────────────────
+// ── Auth — Password Reset ──────────────────────────────────────────────
 export const forgotPasswordApi = (data) => api.post('/auth/forgot-password', data);
 export const resetPasswordApi  = (data) => api.post('/auth/reset-password',  data);
 

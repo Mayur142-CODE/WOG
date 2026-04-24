@@ -41,11 +41,11 @@ const TopNavbar = ({ setIsMobileOpen }) => {
         {/* User */}
         <div className={s.userSection}>
           <div className={s.userAvatar}>
-            {user?.displayName?.charAt(0)?.toUpperCase() || 'U'}
+            {(user?.displayName || user?.name || user?.username)?.charAt(0)?.toUpperCase() || 'U'}
           </div>
           <div className={s.userDetails}>
             <div className={s.userNameRow}>
-              <span className={s.userNameText}>{user?.displayName || '...'}</span>
+              <span className={s.userNameText}>{user?.displayName || user?.name || user?.username || '...'}</span>
               {user?.role === 'admin' && (
                 <Crown size={11} fill="currentColor" className={s.crownIcon} />
               )}

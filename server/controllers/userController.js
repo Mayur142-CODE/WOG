@@ -1,5 +1,6 @@
 const Player = require('../models/Player');
 const Scrim  = require('../models/Scrim');
+const bcrypt = require('bcryptjs');
 const generateToken = require('../utils/generateToken');
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -161,4 +162,133 @@ const updateUserEmail = async (req, res, next) => {
   }
 };
 
-module.exports = { updateUsername, updatePassword, createUser, updateUserEmail };
+// ─────────────────────────────────────────────────────────────────────────────
+// PUT /api/users/update-profile  — authenticated user updates own username + email
+// ─────────────────────────────────────────────────────────────────────────────
+const updateProfile = async (req, res, next) => {
+  try {
+    const { username, email } = req.body;
+    const updates = {};
+
+    if (username) {
+      const uNorm = username.trim().toLowerCase();
+      const taken  = await Player.findOne({ username: uNorm });
+      if (taken && taken._id.toString() !== req.user.id)
+        return res.status(400).json({ message: 'Username already taken' });
+      updates.username = uNorm;
+      updates.name     = username.trim().charAt(0).toUpperCase() + username.trim().slice(1);
+    }
+
+    if (email) {
+      const eNorm = email.trim().toLowerCase();
+      const taken  = await Player.findOne({ email: eNorm });
+      if (taken && taken._id.toString() !== req.user.id)
+        return res.status(400).json({ message: 'Email already registered' });
+      updates.email = eNorm;
+    }
+
+    if (Object.keys(updates).length === 0)
+      return res.status(400).json({ message: 'No changes provided' });
+
+    const player = await Player.findByIdAndUpdate(req.user.id, updates, { new: true })
+      .select('-password -resetPasswordToken -resetPasswordExpires');
+
+    res.json({
+      message: 'Profile updated successfully',
+      token: generateToken(player._id, player.role),
+      user: {
+        id:          player._id,
+        username:    player.username,
+        displayName: player.name,
+        name:        player.name,
+        email:       player.email || null,
+        role:        player.role,
+      },
+    });
+  } catch (err) {
+    if (err.code === 11000) {
+      const field = Object.keys(err.keyPattern)[0];
+      return res.status(400).json({ message: `${field} already exists` });
+    }
+    next(err);
+  }
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PUT /api/users/:id/admin-update  — Admin: edit any player's name/username/email/role
+// ─────────────────────────────────────────────────────────────────────────────
+const adminUpdatePlayer = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { username, email, role, name } = req.body;
+    const updates = {};
+
+    if (username) updates.username = username.trim().toLowerCase();
+    if (email)    updates.email    = email.trim().toLowerCase();
+    if (role)     updates.role     = role;
+    if (name)     updates.name     = name.trim();
+
+    if (Object.keys(updates).length === 0)
+      return res.status(400).json({ message: 'No changes provided' });
+
+    // Uniqueness checks
+    if (updates.username) {
+      const taken = await Player.findOne({ username: updates.username });
+      if (taken && taken._id.toString() !== id)
+        return res.status(400).json({ message: 'Username already taken' });
+    }
+    if (updates.email) {
+      const taken = await Player.findOne({ email: updates.email });
+      if (taken && taken._id.toString() !== id)
+        return res.status(400).json({ message: 'Email already registered to another player' });
+    }
+
+    const player = await Player.findByIdAndUpdate(id, updates, { new: true, runValidators: true })
+      .select('-password -resetPasswordToken -resetPasswordExpires');
+
+    if (!player) return res.status(404).json({ message: 'Player not found' });
+
+    res.json({
+      message: 'Player updated successfully',
+      player: {
+        id:       player._id,
+        name:     player.name,
+        username: player.username,
+        email:    player.email || null,
+        role:     player.role,
+      },
+    });
+  } catch (err) {
+    if (err.code === 11000) {
+      const field = Object.keys(err.keyPattern)[0];
+      return res.status(400).json({ message: `${field} already exists` });
+    }
+    next(err);
+  }
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PUT /api/users/:id/password  — Admin: set any player's password
+// ─────────────────────────────────────────────────────────────────────────────
+const adminChangePassword = async (req, res, next) => {
+  try {
+    const { id }          = req.params;
+    const { newPassword } = req.body;
+
+    if (!newPassword || newPassword.length < 4)
+      return res.status(400).json({ message: 'Password must be at least 4 characters' });
+
+    // updateOne bypasses pre-save hook — hash manually
+    const hashed = await bcrypt.hash(newPassword, 12);
+    const result = await Player.updateOne({ _id: id }, { $set: { password: hashed } });
+
+    if (result.matchedCount === 0)
+      return res.status(404).json({ message: 'Player not found' });
+
+    res.json({ message: 'Password updated successfully' });
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = { updateUsername, updatePassword, updateProfile, createUser, updateUserEmail, adminUpdatePlayer, adminChangePassword };

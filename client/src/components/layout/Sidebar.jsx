@@ -13,7 +13,10 @@ const Sidebar = ({ isMobileOpen, setIsMobileOpen }) => {
     { name: 'History', path: '/history', icon: History },
     { name: 'Profile', path: '/profile', icon: User },
     ...(user?.role === 'admin'
-      ? [{ name: 'Players', path: '/players', icon: Users }]
+      ? [
+          { name: 'Players', path: '/players', icon: Users },
+          { name: 'Manage Users', path: '/manage-players', icon: Users },
+        ]
       : []),
   ];
 
@@ -97,10 +100,10 @@ const Sidebar = ({ isMobileOpen, setIsMobileOpen }) => {
         {/* User badge */}
         <div className={s.userBadge}>
           <div className={s.userAvatar}>
-            {user?.displayName?.charAt(0)?.toUpperCase() || 'U'}
+            {(user?.displayName || user?.name || user?.username)?.charAt(0)?.toUpperCase() || 'U'}
           </div>
           <div className={s.userInfo}>
-            <p className={s.userName}>{user?.displayName || 'User'}</p>
+            <p className={s.userName}>{user?.displayName || user?.name || user?.username || 'User'}</p>
             <p className={s.userRole}>{user?.role || 'member'}</p>
           </div>
         </div>
