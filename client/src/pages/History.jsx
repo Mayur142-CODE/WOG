@@ -4,7 +4,7 @@ import { useAppContext } from '../context/AppContext';
 import { motion } from 'framer-motion';
 import {
   Search, Download, Trash2, History as HistoryIcon,
-  Filter, ChevronLeft, ChevronRight, Pencil, Calendar
+  Filter, ChevronLeft, ChevronRight, Pencil, Calendar, Swords, Shield
 } from 'lucide-react';
 import Spinner from '../components/ui/Spinner';
 import PageHeader from '../components/layout/PageHeader';
@@ -202,7 +202,36 @@ const History = () => {
         }
       />
 
-      {/* Filters */}
+      {/* Mode Tabs */}
+      <motion.div
+        initial={{ opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.06 }}
+        className={s.modeTabs}
+      >
+        <button
+          className={modeFilter === 'All' ? s.modeTabActive : s.modeTab}
+          onClick={() => setModeFilter('All')}
+        >
+          All Modes
+        </button>
+        <button
+          className={modeFilter === 'BR' ? s.modeTabActive : s.modeTab}
+          onClick={() => setModeFilter('BR')}
+        >
+          <Swords size={14} />
+          Battle Royale
+        </button>
+        <button
+          className={modeFilter === 'CS' ? s.modeTabActiveCs : s.modeTab}
+          onClick={() => setModeFilter('CS')}
+        >
+          <Shield size={14} />
+          Clash Squad
+        </button>
+      </motion.div>
+
+      {/* Search + Player Filter */}
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
@@ -211,26 +240,19 @@ const History = () => {
       >
         <div className={s.searchField}>
           <Input
-            placeholder="Search player or rank…"
+            placeholder="Search player…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             icon={<Search size={15} />}
           />
         </div>
         <div className={s.filterField}>
-            <Select value={playerFilter} onChange={(e) => setPlayerFilter(e.target.value)} icon={<Filter size={15} />}>
-              {uniquePlayers.map((p) => (
-                <option key={p} value={p}>{p === 'All' ? 'All Players' : p}</option>
-              ))}
-            </Select>
-          </div>
-          <div className={s.filterField}>
-            <Select value={modeFilter} onChange={(e) => setModeFilter(e.target.value)} icon={<Filter size={15} />}>
-              <option value="All">All Modes</option>
-              <option value="BR">Battle Royale</option>
-              <option value="CS">Clash Squad</option>
-            </Select>
-          </div>
+          <Select value={playerFilter} onChange={(e) => setPlayerFilter(e.target.value)} icon={<Filter size={15} />}>
+            {uniquePlayers.map((p) => (
+              <option key={p} value={p}>{p === 'All' ? 'All Players' : p}</option>
+            ))}
+          </Select>
+        </div>
       </motion.div>
 
       {/* Table */}

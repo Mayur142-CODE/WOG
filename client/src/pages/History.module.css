@@ -214,3 +214,44 @@
   border: 1px solid rgba(99,102,241,0.3);
   color: #818cf8;
 }
+
+/* ── Mode Tabs ─────────────────────────────────────────────────────────── */
+.modeTabs {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.modeTab,
+.modeTabActive,
+.modeTabActiveCs {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.475rem 1rem;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.16s;
+  border: 1px solid var(--color-border-default);
+  background: var(--color-bg-elevated);
+  color: var(--color-text-muted);
+}
+
+.modeTabActive {
+  border-color: rgba(239,68,68,0.45);
+  background: rgba(239,68,68,0.08);
+  color: var(--color-text-primary);
+}
+
+.modeTabActiveCs {
+  border-color: rgba(99,102,241,0.45);
+  background: rgba(99,102,241,0.08);
+  color: #818cf8;
+}
+
+.modeTab:hover {
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+}
