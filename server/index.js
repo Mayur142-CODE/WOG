@@ -16,7 +16,10 @@ const seedData = async () => {
   await Player.updateMany({ role: 'user' }, { role: 'viewer' });
 
   // ── 2. Seed / migrate the 4 core players with auth fields ─────────────────
-  const password = await bcrypt.hash('wog1234', 12);
+  // NOTE: Player.create() triggers the pre-save bcrypt hook — pass RAW password.
+  // Player.updateOne($set) bypasses hooks   — pass PRE-HASHED password.
+  const RAW_PASSWORD    = 'wog1234';
+  const hashedPassword  = await bcrypt.hash(RAW_PASSWORD, 12);
 
   const defaults = [
     { name: 'Dhruvil', username: 'dhruvil', email: 'dhruviltalsaniya4@gmail.com', role: 'viewer', order: 0 },
@@ -32,24 +35,22 @@ const seedData = async () => {
     const existing = await Player.findOne({ name: u.name });
 
     if (!existing) {
-      // Brand-new player — create with all fields (password already hashed above)
-      await Player.create({ ...u, password });
+      // Brand-new — pass RAW password so pre-save hook hashes it exactly once
+      await Player.create({ ...u, password: RAW_PASSWORD });
       u.role === 'admin' ? adminCreated++ : viewerCreated++;
       console.log(`🌱 Created player: ${u.name} (${u.role}) — ${u.email}`);
     } else {
-      // Existing player — patch only missing/changed auth fields
-      const updates = {};
-      if (!existing.username || existing.username !== u.username) updates.username = u.username;
-      if (!existing.email    || existing.email    !== u.email)    updates.email    = u.email;
-      if (!existing.role     || existing.role     !== u.role)     updates.role     = u.role;
-      if (existing.order     !== u.order)                         updates.order    = u.order;
-      // Set password only if the player has never had one (migration from old Player model)
-      if (!existing.password) updates.password = password;
-
-      if (Object.keys(updates).length > 0) {
-        await Player.updateOne({ name: u.name }, { $set: updates });
-        console.log(`🔄 Updated player: ${u.name} →`, Object.keys(updates).join(', '));
-      }
+      // Existing — updateOne bypasses pre-save, so always write the PRE-HASHED value.
+      // This also corrects any previously double-hashed password in the DB.
+      const updates = {
+        password: hashedPassword,           // always correct the hash
+        username: u.username,
+        email:    u.email,
+        role:     u.role,
+        order:    u.order,
+      };
+      await Player.updateOne({ name: u.name }, { $set: updates });
+      console.log(`🔄 Updated player: ${u.name} (password corrected)`);
     }
   }
 
