@@ -21,18 +21,28 @@ const seedData = async () => {
 
   // Seed users (pre-save hook hashes passwords)
   const defaults = [
-    { username: 'dhruvil', displayName: 'Dhruvil', password: 'wog1234', role: 'viewer' },
-    { username: 'mayur',   displayName: 'Mayur',   password: 'wog1234', role: 'admin'  },
-    { username: 'dixit',   displayName: 'Dixit',   password: 'wog1234', role: 'viewer' },
-    { username: 'dhruvin', displayName: 'Dhruvin', password: 'wog1234', role: 'viewer' },
+    { username: 'dhruvil', displayName: 'Dhruvil', password: 'wog1234', role: 'viewer', email: 'dhruviltalsaniya4@gmail.com'  },
+    { username: 'mayur',   displayName: 'Mayur',   password: 'wog1234', role: 'admin',  email: 'mayurchavda122006@gmail.com'  },
+    { username: 'dixit',   displayName: 'Dixit',   password: 'wog1234', role: 'viewer', email: 'dixitgohil0259@gmail.com'     },
+    { username: 'dhruvin', displayName: 'Dhruvin', password: 'wog1234', role: 'viewer', email: 'lakhanidhruvin02@gmail.com'   },
   ];
   for (const u of defaults) {
     const exists = await User.findOne({ username: u.username });
     if (!exists) {
+      // New user — create with email (password hashed by pre-save hook)
       await User.create(u);
-      console.log(`🌱 Created user: ${u.username}`);
+      console.log(`🌱 Created user: ${u.username} (${u.email})`);
+    } else if (!exists.email || exists.email !== u.email) {
+      // Existing user missing email or has a different one — patch only the email field
+      // (never touches password or role)
+      await User.updateOne(
+        { username: u.username },
+        { $set: { email: u.email.trim().toLowerCase() } }
+      );
+      console.log(`📧 Email assigned: ${u.username} → ${u.email}`);
     }
   }
+  console.log('✅ Emails assigned successfully');
 
   // --- Data Migration: Link Players and Scrims to User IDs ---
   const Scrim  = require('./models/Scrim');
