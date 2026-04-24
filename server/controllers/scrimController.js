@@ -44,7 +44,7 @@ const createScrim = async (req, res, next) => {
       winningAmount: winning,
       profitLoss,
       date: date ? new Date(date) : new Date(),
-      user: playerDoc?.user || null,
+      user: playerDoc?._id || null,  // Player._id is now the auth identity
     });
 
     // Auto-advance turn after saving by atomically incrementing index modulo player count.

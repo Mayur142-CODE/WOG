@@ -1,91 +1,96 @@
 require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const connectDB = require('./config/db');
+const express  = require('express');
+const cors     = require('cors');
+const bcrypt   = require('bcryptjs');
+const connectDB    = require('./config/db');
 const errorHandler = require('./middleware/errorHandler');
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Seed / Migration — runs once on every startup
+// ─────────────────────────────────────────────────────────────────────────────
 const seedData = async () => {
   const Player = require('./models/Player');
-  const User   = require('./models/User');
+  const Scrim  = require('./models/Scrim');
 
-  // Normalize legacy 'user' role to 'viewer' EARLY to prevent validation errors
-  await User.updateMany({ role: 'user' }, { role: 'viewer' });
+  // ── 1. Normalize legacy roles ──────────────────────────────────────────────
+  await Player.updateMany({ role: 'user' }, { role: 'viewer' });
 
-  // Seed players
-  if ((await Player.countDocuments()) === 0) {
-    await Player.insertMany(
-      ['Dhruvil', 'Mayur', 'Dixit', 'Dhruvin'].map((name, order) => ({ name, order }))
-    );
-    console.log('🌱 Seeded default players');
-  }
+  // ── 2. Seed / migrate the 4 core players with auth fields ─────────────────
+  const password = await bcrypt.hash('wog1234', 12);
 
-  // Seed users (pre-save hook hashes passwords)
   const defaults = [
-    { username: 'dhruvil', displayName: 'Dhruvil', password: 'wog1234', role: 'viewer', email: 'dhruviltalsaniya4@gmail.com'  },
-    { username: 'mayur',   displayName: 'Mayur',   password: 'wog1234', role: 'admin',  email: 'mayurchavda122006@gmail.com'  },
-    { username: 'dixit',   displayName: 'Dixit',   password: 'wog1234', role: 'viewer', email: 'dixitgohil0259@gmail.com'     },
-    { username: 'dhruvin', displayName: 'Dhruvin', password: 'wog1234', role: 'viewer', email: 'lakhanidhruvin02@gmail.com'   },
+    { name: 'Dhruvil', username: 'dhruvil', email: 'dhruviltalsaniya4@gmail.com', role: 'viewer', order: 0 },
+    { name: 'Dhruvin', username: 'dhruvin', email: 'lakhanidhruvin02@gmail.com',  role: 'viewer', order: 1 },
+    { name: 'Dixit',   username: 'dixit',   email: 'dixitgohil0259@gmail.com',    role: 'viewer', order: 2 },
+    { name: 'Mayur',   username: 'mayur',   email: 'mayurchavda122006@gmail.com', role: 'admin',  order: 3 },
   ];
+
+  let adminCreated  = 0;
+  let viewerCreated = 0;
+
   for (const u of defaults) {
-    const exists = await User.findOne({ username: u.username });
-    if (!exists) {
-      // New user — create with email (password hashed by pre-save hook)
-      await User.create(u);
-      console.log(`🌱 Created user: ${u.username} (${u.email})`);
-    } else if (!exists.email || exists.email !== u.email) {
-      // Existing user missing email or has a different one — patch only the email field
-      // (never touches password or role)
-      await User.updateOne(
-        { username: u.username },
-        { $set: { email: u.email.trim().toLowerCase() } }
-      );
-      console.log(`📧 Email assigned: ${u.username} → ${u.email}`);
+    const existing = await Player.findOne({ name: u.name });
+
+    if (!existing) {
+      // Brand-new player — create with all fields (password already hashed above)
+      await Player.create({ ...u, password });
+      u.role === 'admin' ? adminCreated++ : viewerCreated++;
+      console.log(`🌱 Created player: ${u.name} (${u.role}) — ${u.email}`);
+    } else {
+      // Existing player — patch only missing/changed auth fields
+      const updates = {};
+      if (!existing.username || existing.username !== u.username) updates.username = u.username;
+      if (!existing.email    || existing.email    !== u.email)    updates.email    = u.email;
+      if (!existing.role     || existing.role     !== u.role)     updates.role     = u.role;
+      if (existing.order     !== u.order)                         updates.order    = u.order;
+      // Set password only if the player has never had one (migration from old Player model)
+      if (!existing.password) updates.password = password;
+
+      if (Object.keys(updates).length > 0) {
+        await Player.updateOne({ name: u.name }, { $set: updates });
+        console.log(`🔄 Updated player: ${u.name} →`, Object.keys(updates).join(', '));
+      }
     }
   }
-  console.log('✅ Emails assigned successfully');
 
-  // --- Data Migration: Link Players and Scrims to User IDs ---
-  const Scrim  = require('./models/Scrim');
-  const allUsers = await User.find();
-  for (const user of allUsers) {
-    // Link Player by name (case-insensitive or exact match)
-    await Player.updateMany(
-      { name: { $regex: new RegExp(`^${user.displayName}$`, 'i') }, user: { $exists: false } },
-      { user: user._id }
-    );
-    // Link Scrims by player name
+  if (adminCreated  > 0) console.log(`✅ Admin user created: Mayur`);
+  if (viewerCreated > 0) console.log(`✅ Viewer users created: ${viewerCreated}`);
+  console.log('✅ Players seeded successfully');
+
+  // ── 3. Link existing Scrim records to Player IDs ───────────────────────────
+  const allPlayers = await Player.find();
+  for (const player of allPlayers) {
     await Scrim.updateMany(
-      { player: { $regex: new RegExp(`^${user.displayName}$`, 'i') }, user: { $exists: false } },
-      { user: user._id }
+      { player: { $regex: new RegExp(`^${player.name}$`, 'i') }, user: { $exists: false } },
+      { user: player._id }
     );
   }
-  console.log('✅ Data migration: Linked existing records to User IDs');
+  console.log('✅ Scrims linked to Player IDs');
 };
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Start Server
+// ─────────────────────────────────────────────────────────────────────────────
 const startServer = async () => {
   await connectDB();
   await seedData();
 
   const app = express();
 
-  // Dynamic CORS configuration
+  // Dynamic CORS
   const allowedOrigins = [
     'http://localhost:5173',
     'https://wog-three.vercel.app',
-    process.env.CLIENT_URL
+    process.env.CLIENT_URL,
   ].filter(Boolean);
 
   app.use(cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps or curl requests)
       if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+      callback(new Error('Not allowed by CORS'));
     },
-    credentials: true
+    credentials: true,
   }));
 
   app.use(express.json());

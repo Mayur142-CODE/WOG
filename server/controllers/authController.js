@@ -1,11 +1,10 @@
-const crypto = require('crypto');
-const User = require('../models/User');
+const crypto   = require('crypto');
+const Player   = require('../models/Player');
 const generateToken = require('../utils/generateToken');
 const { sendPasswordResetEmail } = require('../utils/sendEmail');
 
 // ─────────────────────────────────────────────────────────────────────────────
-// POST /api/auth/login
-// Accepts username OR email as the identifier
+// POST /api/auth/login  — accepts username OR email
 // ─────────────────────────────────────────────────────────────────────────────
 const login = async (req, res, next) => {
   try {
@@ -16,21 +15,24 @@ const login = async (req, res, next) => {
     const identifier = username.trim().toLowerCase();
 
     // Match by username OR email
-    const user = await User.findOne({
+    const player = await Player.findOne({
       $or: [{ username: identifier }, { email: identifier }],
     });
 
-    if (!user || !(await user.matchPassword(password)))
+    if (!player || !player.password)
+      return res.status(401).json({ message: 'Invalid credentials' });
+
+    if (!(await player.matchPassword(password)))
       return res.status(401).json({ message: 'Invalid credentials' });
 
     res.json({
-      token: generateToken(user._id, user.role),
+      token: generateToken(player._id, player.role),
       user: {
-        id:          user._id,
-        username:    user.username,
-        displayName: user.displayName,
-        role:        user.role,
-        email:       user.email || null,
+        id:          player._id,
+        username:    player.username,
+        displayName: player.name,
+        role:        player.role,
+        email:       player.email || null,
       },
     });
   } catch (err) {
@@ -43,9 +45,10 @@ const login = async (req, res, next) => {
 // ─────────────────────────────────────────────────────────────────────────────
 const getMe = async (req, res, next) => {
   try {
-    const user = await User.findById(req.user.id).select('-password -resetPasswordToken -resetPasswordExpires');
-    if (!user) return res.status(404).json({ message: 'User not found' });
-    res.json(user);
+    const player = await Player.findById(req.user.id)
+      .select('-password -resetPasswordToken -resetPasswordExpires');
+    if (!player) return res.status(404).json({ message: 'Player not found' });
+    res.json(player);
   } catch (err) {
     next(err);
   }
@@ -53,46 +56,36 @@ const getMe = async (req, res, next) => {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // POST /api/auth/forgot-password
-// Body: { email }
 // ─────────────────────────────────────────────────────────────────────────────
 const forgotPassword = async (req, res, next) => {
   try {
     const { email } = req.body;
-    if (!email || !email.trim())
+    if (!email?.trim())
       return res.status(400).json({ message: 'Email is required' });
 
-    const user = await User.findOne({ email: email.trim().toLowerCase() });
+    const player = await Player.findOne({ email: email.trim().toLowerCase() });
 
-    // Always return success to prevent email enumeration
-    if (!user) {
-      return res.json({
-        message: 'If that email is registered, a reset link has been sent.',
-      });
+    // Always return same message to prevent email enumeration
+    if (!player) {
+      return res.json({ message: 'If that email is registered, a reset link has been sent.' });
     }
 
-    // Generate raw token (sent in email)
-    const rawToken = crypto.randomBytes(32).toString('hex');
+    const rawToken    = crypto.randomBytes(32).toString('hex');
+    const hashedToken = crypto.createHash('sha256').update(rawToken).digest('hex');
 
-    // Hash token before storing (security: DB breach ≠ token leak)
-    const hashedToken = crypto
-      .createHash('sha256')
-      .update(rawToken)
-      .digest('hex');
-
-    user.resetPasswordToken   = hashedToken;
-    user.resetPasswordExpires = Date.now() + 60 * 60 * 1000; // 1 hour
-    await user.save({ validateBeforeSave: false });
+    player.resetPasswordToken   = hashedToken;
+    player.resetPasswordExpires = Date.now() + 60 * 60 * 1000; // 1 hour
+    await player.save({ validateBeforeSave: false });
 
     const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
     const resetUrl  = `${clientUrl}/reset-password?token=${rawToken}`;
 
     try {
-      await sendPasswordResetEmail(user.email, resetUrl);
+      await sendPasswordResetEmail(player.email, resetUrl);
     } catch (emailErr) {
-      // Roll back token if email fails
-      user.resetPasswordToken   = undefined;
-      user.resetPasswordExpires = undefined;
-      await user.save({ validateBeforeSave: false });
+      player.resetPasswordToken   = undefined;
+      player.resetPasswordExpires = undefined;
+      await player.save({ validateBeforeSave: false });
       console.error('Email send error:', emailErr.message);
       return res.status(500).json({ message: 'Failed to send reset email. Please try again.' });
     }
@@ -105,7 +98,6 @@ const forgotPassword = async (req, res, next) => {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // POST /api/auth/reset-password
-// Body: { token, newPassword }
 // ─────────────────────────────────────────────────────────────────────────────
 const resetPassword = async (req, res, next) => {
   try {
@@ -117,25 +109,20 @@ const resetPassword = async (req, res, next) => {
     if (newPassword.length < 4)
       return res.status(400).json({ message: 'Password must be at least 4 characters' });
 
-    // Hash the incoming raw token to compare with stored hash
-    const hashedToken = crypto
-      .createHash('sha256')
-      .update(token.trim())
-      .digest('hex');
+    const hashedToken = crypto.createHash('sha256').update(token.trim()).digest('hex');
 
-    const user = await User.findOne({
+    const player = await Player.findOne({
       resetPasswordToken:   hashedToken,
-      resetPasswordExpires: { $gt: Date.now() }, // still valid
+      resetPasswordExpires: { $gt: Date.now() },
     });
 
-    if (!user)
+    if (!player)
       return res.status(400).json({ message: 'Reset token is invalid or has expired' });
 
-    // Update password (pre-save hook hashes it)
-    user.password             = newPassword;
-    user.resetPasswordToken   = undefined;
-    user.resetPasswordExpires = undefined;
-    await user.save();
+    player.password             = newPassword;
+    player.resetPasswordToken   = undefined;
+    player.resetPasswordExpires = undefined;
+    await player.save();
 
     res.json({ message: 'Password reset successfully. You can now log in.' });
   } catch (err) {
